@@ -375,6 +375,31 @@ pub enum Fact {
     Unblockable(UnblockableFact),
 }
 
+impl From<Fact> for FactType {
+    fn from(f: Fact) -> Self {
+        match f {
+            Fact::AttributeAdjust(_) => FactType::AttributeAdjust,
+            Fact::Buff(_) => FactType::Buff,
+            Fact::ComboField(_) => FactType::ComboField,
+            Fact::ComboFinisher(_) => FactType::ComboFinisher,
+            Fact::Damage(_) => FactType::Damage,
+            Fact::Distance(_) => FactType::Distance,
+            Fact::Duration(_) => FactType::Duration,
+            Fact::Heal(_) => FactType::Heal,
+            Fact::HealingAdjust(_) => FactType::HealingAdjust,
+            Fact::NoData(_) => FactType::NoData,
+            Fact::Number(_) => FactType::Number,
+            Fact::Percent(_) => FactType::Percent,
+            Fact::PrefixedBuff(_) => FactType::PrefixedBuff,
+            Fact::Radius(_) => FactType::Radius,
+            Fact::Range(_) => FactType::Range,
+            Fact::Recharge(_) => FactType::Recharge,
+            Fact::Time(_) => FactType::Time,
+            Fact::Unblockable(_) => FactType::Unblockable,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 // #[serde(deny_unknown_fields)]
 pub struct Skill {

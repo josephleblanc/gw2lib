@@ -424,7 +424,6 @@ impl From<Fact> for FactType {
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
-    pub text: String,
     pub description: String,
     pub icon: Option<String>,
     pub chat_link: String,

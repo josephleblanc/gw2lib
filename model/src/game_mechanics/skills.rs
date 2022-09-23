@@ -376,7 +376,7 @@ pub enum Fact {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-// #[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields)]
 pub struct Skill {
     pub id: SkillId,
     pub name: String,

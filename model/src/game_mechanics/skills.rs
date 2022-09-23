@@ -310,7 +310,7 @@ pub struct NumberFact {
 pub struct PercentFact {
     text: String,
     icon: String,
-    value: u8,
+    percent: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

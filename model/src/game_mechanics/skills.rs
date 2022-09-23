@@ -215,6 +215,7 @@ pub enum SkillFlag {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct AttributeAdjustFact {
     text: String,
     icon: String,
@@ -223,6 +224,7 @@ pub struct AttributeAdjustFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct BuffFact {
     text: String,
     icon: String,
@@ -233,12 +235,14 @@ pub struct BuffFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct ComboFieldFact {
     text: String,
     field_type: FieldType,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct ComboFinisherFact {
     text: String,
     percent: u8,
@@ -246,6 +250,7 @@ pub struct ComboFinisherFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct DamageFact {
     text: String,
     icon: String,
@@ -254,6 +259,7 @@ pub struct DamageFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct DistanceFact {
     text: String,
     icon: String,
@@ -261,6 +267,7 @@ pub struct DistanceFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct DurationFact {
     text: String,
     icon: String,
@@ -268,6 +275,7 @@ pub struct DurationFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct HealFact {
     text: String,
     icont: String,
@@ -275,6 +283,7 @@ pub struct HealFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct HealingAdjustFact {
     text: String,
     icon: String,
@@ -282,12 +291,14 @@ pub struct HealingAdjustFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct NoDataFact {
     text: String,
     icon: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct NumberFact {
     text: String,
     icon: String,
@@ -295,6 +306,7 @@ pub struct NumberFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct PercentFact {
     text: String,
     icon: String,
@@ -302,6 +314,7 @@ pub struct PercentFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct PrefixedBuffFact {
     text: String,
     icon: String,
@@ -313,6 +326,7 @@ pub struct PrefixedBuffFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct RadiusFact {
     text: String,
     icon: String,
@@ -320,6 +334,7 @@ pub struct RadiusFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct RangeFact {
     text: String,
     icon: String,
@@ -327,12 +342,14 @@ pub struct RangeFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct RechargeFact {
     text: String,
     recharge: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct StunBreakFact {
     text: String,
     icon: String,
@@ -340,6 +357,7 @@ pub struct StunBreakFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct TimeFact {
     text: String,
     icon: String,
@@ -347,6 +365,7 @@ pub struct TimeFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct UnblockableFact {
     text: String,
     value: bool,
@@ -431,7 +450,7 @@ pub struct Skill {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-// #[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields)]
 pub struct TraitedFact {
     #[serde(flatten)]
     pub fact: Fact,

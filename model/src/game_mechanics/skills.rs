@@ -347,7 +347,8 @@ pub struct RangeFact {
 pub struct RechargeFact {
     text: String,
     icon: String,
-    recharge: u8,
+    value: u16, // this is u16, though the number will not likely to that high,
+                // because other 'value' fields are u16 and uniformity is good.
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -355,7 +356,7 @@ pub struct RechargeFact {
 pub struct StunBreakFact {
     text: String,
     icon: String,
-    value: bool,
+    value: bool, // this is annoying because most other value fields are numbers
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -371,7 +372,7 @@ pub struct TimeFact {
 pub struct UnblockableFact {
     text: String,
     icon: String,
-    value: bool,
+    value: bool, // this is annoying because most other value fields are numbers
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

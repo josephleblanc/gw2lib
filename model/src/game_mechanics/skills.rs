@@ -376,7 +376,7 @@ pub enum Fact {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+// #[serde(deny_unknown_fields)]
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
@@ -389,7 +389,6 @@ pub struct Skill {
     pub weapon_type: Option<WeaponType>,
     pub professions: Vec<Profession>,
     pub slot: Slot,
-    pub facts: Vec<Fact>,
     pub traited_facts: Option<TraitedFact>,
     pub categores: Category,
     pub attunement: Option<Attunement>,
@@ -403,6 +402,8 @@ pub struct Skill {
     pub bundle_skills: Option<Vec<SkillId>>,
     pub toolbelt_skill: Option<SkillId>,
     pub flags: Option<Vec<SkillFlag>>,
+    #[serde(flatten)]
+    pub facts: Vec<Fact>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

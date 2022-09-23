@@ -427,12 +427,11 @@ pub struct Skill {
     pub bundle_skills: Option<Vec<SkillId>>,
     pub toolbelt_skill: Option<SkillId>,
     pub flags: Option<Vec<SkillFlag>>,
-    #[serde(flatten)]
     pub facts: Vec<Fact>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+// #[serde(deny_unknown_fields)]
 pub struct TraitedFact {
     #[serde(flatten)]
     pub fact: Fact,

@@ -432,12 +432,11 @@ pub struct Skill {
     pub weapon_type: Option<WeaponType>,
     pub professions: Vec<Profession>,
     pub slot: Slot,
-    // will be Option<TraitedFact> once that mess is sorted out.
-    pub traited_facts: Option<String>,
+    pub traited_facts: Option<Vec<TraitedFact>>,
     pub categores: Option<Category>,
     pub attunement: Option<Attunement>,
     pub cost: Option<u8>,
-    pub dual_weild: Option<WeaponType>,
+    pub dual_wield: Option<WeaponType>,
     pub flip_skill: Option<SkillId>,
     pub initiative: Option<u8>,
     pub next_chain: Option<SkillId>,
@@ -449,15 +448,15 @@ pub struct Skill {
     pub facts: Vec<Fact>,
 }
 
-// #[derive(Clone, Debug, Serialize, Deserialize)]
-// #[serde(deny_unknown_fields)]
-// pub struct TraitedFact {
-//     #[serde(flatten)]
-//     pub fact: Fact,
-//     pub requires_trait: TraitId,
-//     /// array index of Fact
-//     pub overrides: Option<u8>,
-// }
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TraitedFact {
+    #[serde(flatten, rename = "type")]
+    pub _type: Fact,
+    pub requires_trait: TraitId,
+    /// array index of Fact
+    pub overrides: Option<usize>,
+}
 
 impl Endpoint for Skill {
     const AUTHENTICATED: bool = false;

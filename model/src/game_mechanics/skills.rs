@@ -238,6 +238,7 @@ pub struct BuffFact {
 #[serde(deny_unknown_fields)]
 pub struct ComboFieldFact {
     text: String,
+    icon: String,
     field_type: FieldType,
 }
 
@@ -369,6 +370,7 @@ pub struct TimeFact {
 #[serde(deny_unknown_fields)]
 pub struct UnblockableFact {
     text: String,
+    icon: String,
     value: bool,
 }
 

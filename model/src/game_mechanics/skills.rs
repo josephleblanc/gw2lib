@@ -302,7 +302,7 @@ pub struct NoDataFact {
 pub struct NumberFact {
     text: String,
     icon: String,
-    value: u8,
+    value: u16,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -420,7 +420,6 @@ impl From<Fact> for FactType {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-// #[serde(deny_unknown_fields)]
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
@@ -451,11 +450,40 @@ pub struct Skill {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TraitedFact {
-    #[serde(flatten, rename = "type")]
-    pub _type: Fact,
+    pub text: String,
+    #[serde(rename = "type")]
+    pub _type: FactType,
     pub requires_trait: TraitId,
     /// array index of Fact
     pub overrides: Option<usize>,
+
+    /// these are all the fields Facts can have
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<Status>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub apply_count: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub field_type: Option<FieldType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub percent: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub finisher_type: Option<FinisherType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub damage_multiplier: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub distance: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hit_count: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recharge: Option<u8>,
 }
 
 impl Endpoint for Skill {

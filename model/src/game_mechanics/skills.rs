@@ -278,7 +278,7 @@ pub struct DurationFact {
 #[serde(deny_unknown_fields)]
 pub struct HealFact {
     text: String,
-    icont: String,
+    icon: String,
     hit_count: u8,
 }
 
@@ -372,7 +372,7 @@ pub struct UnblockableFact {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(tag = "type", content = "facts")]
+#[serde(tag = "type")]
 pub enum Fact {
     AttributeAdjust(AttributeAdjustFact),
     Buff(BuffFact),
@@ -433,7 +433,8 @@ pub struct Skill {
     pub weapon_type: Option<WeaponType>,
     pub professions: Vec<Profession>,
     pub slot: Slot,
-    pub traited_facts: Option<TraitedFact>,
+    // will be Option<TraitedFact> once that mess is sorted out.
+    pub traited_facts: Option<String>,
     pub categores: Category,
     pub attunement: Option<Attunement>,
     pub cost: Option<u8>,
@@ -449,15 +450,15 @@ pub struct Skill {
     pub facts: Vec<Fact>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TraitedFact {
-    #[serde(flatten)]
-    pub fact: Fact,
-    pub requires_trait: TraitId,
-    /// array index of Fact
-    pub overrides: Option<u8>,
-}
+// #[derive(Clone, Debug, Serialize, Deserialize)]
+// #[serde(deny_unknown_fields)]
+// pub struct TraitedFact {
+//     #[serde(flatten)]
+//     pub fact: Fact,
+//     pub requires_trait: TraitId,
+//     /// array index of Fact
+//     pub overrides: Option<u8>,
+// }
 
 impl Endpoint for Skill {
     const AUTHENTICATED: bool = false;

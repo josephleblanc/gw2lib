@@ -434,7 +434,7 @@ pub struct Skill {
     pub slot: Slot,
     // will be Option<TraitedFact> once that mess is sorted out.
     pub traited_facts: Option<String>,
-    pub categores: Category,
+    pub categores: Option<Category>,
     pub attunement: Option<Attunement>,
     pub cost: Option<u8>,
     pub dual_weild: Option<WeaponType>,

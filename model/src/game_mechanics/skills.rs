@@ -372,7 +372,7 @@ pub struct UnblockableFact {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
+#[serde(tag = "type", content = "facts")]
 pub enum Fact {
     AttributeAdjust(AttributeAdjustFact),
     Buff(BuffFact),

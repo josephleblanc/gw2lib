@@ -451,6 +451,34 @@ pub struct Skill {
     pub facts: Vec<Fact>,
 }
 
+/// This does not work,
+/// returns Error("missing field `text`"...
+// #[derive(Clone, Debug, Serialize, Deserialize)]
+// #[serde(deny_unknown_fields)]
+// pub struct TraitedFact {
+//     pub text: String,
+//     #[serde(rename = "type", flatten)]
+//     pub _type: Fact,
+//     pub requires_trait: TraitId,
+//     /// array index of Fact
+//     pub overrides: Option<usize>,
+// }
+
+/// This does not work either,
+/// returns Error("invalid type: string \"Damage\", expected internally tagged
+///     enum Fact"
+// #[derive(Clone, Debug, Serialize, Deserialize)]
+// #[serde(deny_unknown_fields)]
+// pub struct TraitedFact {
+//     pub text: String,
+//     #[serde(rename = "type")]
+//     pub _type: Fact,
+//     pub requires_trait: TraitId,
+//     /// array index of Fact
+//     pub overrides: Option<usize>,
+// }
+
+/// This works, but is there a better way?
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TraitedFact {
@@ -479,7 +507,7 @@ pub struct TraitedFact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub finisher_type: Option<FinisherType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub damage_multiplier: Option<f32>,
+    pub dmg_multiplier: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub distance: Option<u16>,
     #[serde(skip_serializing_if = "Option::is_none")]

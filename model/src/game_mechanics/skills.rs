@@ -345,6 +345,7 @@ pub struct RangeFact {
 #[serde(deny_unknown_fields)]
 pub struct RechargeFact {
     text: String,
+    icon: String,
     recharge: u8,
 }
 

@@ -2,10 +2,113 @@ use serde::{Deserialize, Serialize};
 
 use crate::game_mechanics::traits::TraitId;
 use crate::items::AttributeType;
-pub use crate::{authenticated::characters::Profession, items::WeaponType};
+pub use crate::{authenticated::characters::Profession, items};
 use crate::{BulkEndpoint, Endpoint, EndpointWithId};
 
 pub type SkillId = u32;
+
+// I would love to know if there is a better way of doing this.
+// The only reason it is necessary to have two structs representing
+// weapon type for the items api and the skills api is because
+// shortbow is named differently in the two apis.
+// items api: ShortBow
+// skills api: Shortbow
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+#[derive(Clone, PartialEq, Eq, PartialOrd, Debug, Serialize, Deserialize)]
+pub enum SkillWeaponType {
+    Axe,
+    Dagger,
+    Mace,
+    Pistol,
+    Scepter,
+    Sword,
+    Focus,
+    Shield,
+    Torch,
+    Warhorn,
+    Greatsword,
+    Hammer,
+    Longbow,
+    Rifle,
+    Shortbow,
+    Staff,
+    Harpoon,
+    Spear, // I had to add spear for some skills that reference WeaponType
+    Speargun,
+    Trident,
+    LargeBundle,
+    SmallBundle,
+    Toy,
+    ToyTwoHanded,
+    None,
+}
+
+impl From<items::WeaponType> for SkillWeaponType {
+    fn from(w: items::WeaponType) -> Self {
+        match w {
+            items::WeaponType::Axe => SkillWeaponType::Axe,
+            items::WeaponType::Dagger => SkillWeaponType::Dagger,
+            items::WeaponType::Mace => SkillWeaponType::Mace,
+            items::WeaponType::Pistol => SkillWeaponType::Pistol,
+            items::WeaponType::Scepter => SkillWeaponType::Scepter,
+            items::WeaponType::Sword => SkillWeaponType::Sword,
+            items::WeaponType::Focus => SkillWeaponType::Focus,
+            items::WeaponType::Shield => SkillWeaponType::Shield,
+            items::WeaponType::Torch => SkillWeaponType::Torch,
+            items::WeaponType::Warhorn => SkillWeaponType::Warhorn,
+            items::WeaponType::Greatsword => SkillWeaponType::Greatsword,
+            items::WeaponType::Hammer => SkillWeaponType::Hammer,
+            items::WeaponType::LongBow => SkillWeaponType::Longbow,
+            items::WeaponType::Rifle => SkillWeaponType::Rifle,
+            items::WeaponType::ShortBow => SkillWeaponType::Shortbow,
+            items::WeaponType::Staff => SkillWeaponType::Staff,
+            items::WeaponType::Harpoon => SkillWeaponType::Harpoon,
+            items::WeaponType::Spear => SkillWeaponType::Spear, // I had to add spear for some skills that reference WeaponType
+            items::WeaponType::Speargun => SkillWeaponType::Speargun,
+            items::WeaponType::Trident => SkillWeaponType::Trident,
+            items::WeaponType::LargeBundle => SkillWeaponType::LargeBundle,
+            items::WeaponType::SmallBundle => SkillWeaponType::SmallBundle,
+            items::WeaponType::Toy => SkillWeaponType::Toy,
+            items::WeaponType::ToyTwoHanded => SkillWeaponType::ToyTwoHanded,
+            items::WeaponType::None => SkillWeaponType::None,
+        }
+    }
+}
+
+impl Into<items::WeaponType> for SkillWeaponType {
+    fn into(self) -> items::WeaponType {
+        match self {
+            SkillWeaponType::Axe => items::WeaponType::Axe,
+            SkillWeaponType::Dagger => items::WeaponType::Dagger,
+            SkillWeaponType::Mace => items::WeaponType::Mace,
+            SkillWeaponType::Pistol => items::WeaponType::Pistol,
+            SkillWeaponType::Scepter => items::WeaponType::Scepter,
+            SkillWeaponType::Sword => items::WeaponType::Sword,
+            SkillWeaponType::Focus => items::WeaponType::Focus,
+            SkillWeaponType::Shield => items::WeaponType::Shield,
+            SkillWeaponType::Torch => items::WeaponType::Torch,
+            SkillWeaponType::Warhorn => items::WeaponType::Warhorn,
+            SkillWeaponType::Greatsword => items::WeaponType::Greatsword,
+            SkillWeaponType::Hammer => items::WeaponType::Hammer,
+            SkillWeaponType::Longbow => items::WeaponType::LongBow,
+            SkillWeaponType::Rifle => items::WeaponType::Rifle,
+            SkillWeaponType::Shortbow => items::WeaponType::ShortBow,
+            SkillWeaponType::Staff => items::WeaponType::Staff,
+            SkillWeaponType::Harpoon => items::WeaponType::Harpoon,
+            SkillWeaponType::Spear => items::WeaponType::Spear, // I had to add spear for some skills that reference WeaponType
+            SkillWeaponType::Speargun => items::WeaponType::Speargun,
+            SkillWeaponType::Trident => items::WeaponType::Trident,
+            SkillWeaponType::LargeBundle => items::WeaponType::LargeBundle,
+            SkillWeaponType::SmallBundle => items::WeaponType::SmallBundle,
+            SkillWeaponType::Toy => items::WeaponType::Toy,
+            SkillWeaponType::ToyTwoHanded => items::WeaponType::ToyTwoHanded,
+            SkillWeaponType::None => items::WeaponType::None,
+        }
+    }
+}
+////////////////////////////////////////////////
+////////////////////////////////////////////////
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum SkillType {
@@ -569,7 +672,7 @@ pub struct Skill {
     // not all skills have a 'type' field. For example; Binding Roots, id: 1279
     #[serde(rename = "type")]
     pub _type: Option<SkillType>,
-    pub weapon_type: Option<WeaponType>,
+    pub weapon_type: Option<SkillWeaponType>,
     // not all skills have a 'professions' field. For example; Binding Roots, id: 1279
     pub professions: Option<Vec<Profession>>,
     // not all skills have a 'slot' field. For example; Binding Roots, id: 1279
@@ -578,7 +681,7 @@ pub struct Skill {
     pub categores: Option<Category>,
     pub attunement: Option<Attunement>,
     pub cost: Option<u8>,
-    pub dual_wield: Option<WeaponType>,
+    pub dual_wield: Option<SkillWeaponType>,
     pub flip_skill: Option<SkillId>,
     pub initiative: Option<u8>,
     pub next_chain: Option<SkillId>,

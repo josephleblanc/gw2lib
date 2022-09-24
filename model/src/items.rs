@@ -408,8 +408,12 @@ pub enum WeaponType {
     Warhorn,
     Greatsword,
     Hammer,
+    #[serde(alias = "Longbow")]
+    // Added because longbows are referenced as "Longbow" in the skill api
     LongBow,
     Rifle,
+    #[serde(alias = "Shortbow")]
+    // Added because shortbows are referenced as "Shortbow" in the skill api
     ShortBow,
     Staff,
     Harpoon,
@@ -420,6 +424,10 @@ pub enum WeaponType {
     SmallBundle,
     Toy,
     ToyTwoHanded,
+    // I had to add Nothing alias for thief skills that specify that there is
+    // nothing in the off hand, I assume for Dual Wield skill purposes.
+    // --> Do you using alias is the best way to handle this?
+    #[serde(alias = "Nothing")]
     None,
 }
 

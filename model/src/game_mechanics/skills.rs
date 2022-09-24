@@ -15,6 +15,8 @@ pub enum SkillType {
     Profession,
     Utility,
     Weapon,
+    Toolbelt,
+    Monster,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -36,6 +38,9 @@ pub enum Slot {
     Weapon_3,
     Weapon_4,
     Weapon_5,
+    Heal,
+    Elite,
+    Toolbelt,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -56,6 +61,7 @@ pub enum FactType {
     Radius,
     Range,
     Recharge,
+    StunBreak,
     Time,
     Unblockable,
 }
@@ -75,8 +81,9 @@ pub enum Status {
     Stability,
     Swiftness,
     Vigor,
+    Resolve,
     // Conditions
-    Bleed,
+    Bleeding,
     Burning,
     Confusion,
     Poisoned,
@@ -99,15 +106,117 @@ pub enum Status {
     Pull,
     Sink,
     Stun,
+    //// Signets
+    // Elementalist Signets
+    #[serde(rename = "Signet of Fire")]
+    SignetOfFire,
+    #[serde(rename = "Signet of Water")]
+    SignetOfWater,
+    #[serde(rename = "Signet of Earth")]
+    SignetOfEarth,
+    #[serde(rename = "Signet of Air")]
+    SignetOfAir,
+    // Guardian Signets
+    #[serde(rename = "Bane Signet")]
+    BaneSignet,
+    #[serde(rename = "Signet of Judgment")]
+    SignetOfJudgment,
+    #[serde(rename = "Signet of Wrath")]
+    SignetOfWrath,
+    #[serde(rename = "Signet of Mercy")]
+    SignetOfMercy,
+    // Mesmer-specific
+    #[serde(rename = "Signet of Domination")]
+    SignetOfDomination,
+    #[serde(rename = "Signet of Midnight")]
+    SignetOfMidnight,
+    // Necromancer-specific
+    #[serde(rename = "Signet of the Locust")]
+    SignetOfTheLocust,
+    #[serde(rename = "Signet of Spite")]
+    SignetOfSpite,
+    //// Profession-specific Statuses
+    // Warrior-specific
+    Rampage,
+    // Mesmer-specific
+    Mirror,
+    Distortion,
+    #[serde(rename = "Illusion of Life")]
+    IllusionOfLife,
+    #[serde(rename = "Blur")]
+    Blur,
+    // Guardian-specific
+    #[serde(rename = "Binding Blade")]
+    BindingBlade,
+    #[serde(rename = "Shield of Wrath")]
+    ShieldOfWrath,
+    #[serde(rename = "Zealot's Flame")]
+    ZealotsFlame,
+    #[serde(rename = "Virtue of Resolve")]
+    VirtueOfResolve,
+    // Necromancer-specific
+    #[serde(rename = "Grim Specter")]
+    GrimSpecter,
+    #[serde(rename = "Spectral Walk")]
+    SpectralWalk,
+    // Elementalist-specific
+    #[serde(rename = "Chaos Aura")]
+    ChaosAura,
+    #[serde(rename = "Dark Aura")]
+    DarkAura,
+    #[serde(rename = "Fire Aura")]
+    FireAura,
+    #[serde(rename = "Frost Aura")]
+    FrostAura,
+    #[serde(rename = "Light Aura")]
+    LightAura,
+    #[serde(rename = "Magnetic Aura")]
+    MagneticAura,
+    #[serde(rename = "Shocking Aura")]
+    ShockingAura,
+    #[serde(rename = "Stone Heart")]
+    StoneHeart,
+    #[serde(rename = "Conjure Fire Attributes")] // Yes, these are actually different
+    ConjureFireAttributes,
+    #[serde(rename = "Conjure Flame Attributes")]
+    ConjureFlameAttributes,
+    #[serde(rename = "Conjure Earth Attributes")]
+    ConjureEarthAttributes,
+    #[serde(rename = "Conjure Frost Attributes")]
+    ConjureFrostAttributes,
+    #[serde(rename = "Conjure Lightning Attributes")]
+    ConjureLightningAttributes,
+    #[serde(rename = "Water Arrow")]
+    WaterArrow,
+    #[serde(rename = "Arcane Power")]
+    ArcanePower,
+    #[serde(rename = "Arcane Shield")]
+    ArcaneShield,
+    #[serde(rename = "Rock Barrier")]
+    RockBarrier,
+    #[serde(rename = "Tectonic Shift")]
+    TectonicShift,
+    #[serde(rename = "Renewal of Fire")]
+    RenewalOfFire,
+    Tornado,
+    //// Race-specific
+    // Norn
+    Prowl,
+    // Sylvari
+    #[serde(rename = "Take Root")]
+    TakeRoot,
+    // #[serde(rename = "Conjure Magnetic Attributes")]
+    // ConjureMagneticAttributes,
     // Misc
     Agony,
     Barrier,
     Invulnerability,
     Revealed,
     Stealth,
-    StunBreak,
     Superspeed,
     Unblockable,
+    #[serde(rename = "Fired Up!")]
+    FiredUp,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -135,8 +244,9 @@ pub enum FinisherType {
 pub struct Prefix {
     text: String,
     icon: String,
-    status: String,
-    description: String,
+    // These fields are not always used, ex. Crippling Shield, id: 5746
+    status: Option<String>,
+    description: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -179,7 +289,7 @@ pub enum Category {
     Exceed,
     Gadget,
     PhotonForge,
-    Toolbelt,
+    // Toolbelt,
     Turret,
     Beast,
     CelestialAvatar,
@@ -235,9 +345,10 @@ pub enum SkillFlag {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct AttributeAdjustFact {
-    text: String,
+    text: Option<String>,
     icon: String,
-    value: u16,
+    // value missing on Bloody Frenzy, id: 12424
+    value: Option<u16>,
     target: AttributeType,
 }
 
@@ -246,10 +357,13 @@ pub struct AttributeAdjustFact {
 pub struct BuffFact {
     text: String,
     icon: String,
-    duration: u8,
     status: Status,
-    description: String,
-    apply_count: u8,
+    // Sometimes missing from Fact, ex. Rock Barrier, id: 5695
+    description: Option<String>,
+    // Sometimes duration and apply_count are not included in a Buff,
+    // ex. Fiery Rush, id: 5517
+    duration: Option<u8>,
+    apply_count: Option<u8>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -265,8 +379,10 @@ pub struct ComboFieldFact {
 pub struct ComboFinisherFact {
     text: String,
     icon: String,
-    percent: u8,
+    // other value of percent is f32, so this probably should be as well
+    percent: f32,
     finisher_type: FinisherType,
+    chance: Option<u8>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -330,7 +446,7 @@ pub struct NumberFact {
 pub struct PercentFact {
     text: String,
     icon: String,
-    percent: u8,
+    percent: f32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -366,8 +482,7 @@ pub struct RangeFact {
 pub struct RechargeFact {
     text: String,
     icon: String,
-    value: u16, // this is u16, though the number will not likely to that high,
-                // because other 'value' fields are u16 and uniformity is good.
+    value: f32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -413,6 +528,7 @@ pub enum Fact {
     Radius(RadiusFact),
     Range(RangeFact),
     Recharge(RechargeFact),
+    StunBreak(StunBreakFact),
     Time(TimeFact),
     Unblockable(UnblockableFact),
 }
@@ -436,6 +552,7 @@ impl From<Fact> for FactType {
             Fact::Radius(_) => FactType::Radius,
             Fact::Range(_) => FactType::Range,
             Fact::Recharge(_) => FactType::Recharge,
+            Fact::StunBreak(_) => FactType::StunBreak,
             Fact::Time(_) => FactType::Time,
             Fact::Unblockable(_) => FactType::Unblockable,
         }
@@ -449,11 +566,14 @@ pub struct Skill {
     pub description: String,
     pub icon: Option<String>,
     pub chat_link: String,
+    // not all skills have a 'type' field. For example; Binding Roots, id: 1279
     #[serde(rename = "type")]
-    pub _type: SkillType,
+    pub _type: Option<SkillType>,
     pub weapon_type: Option<WeaponType>,
-    pub professions: Vec<Profession>,
-    pub slot: Slot,
+    // not all skills have a 'professions' field. For example; Binding Roots, id: 1279
+    pub professions: Option<Vec<Profession>>,
+    // not all skills have a 'slot' field. For example; Binding Roots, id: 1279
+    pub slot: Option<Slot>,
     pub traited_facts: Option<Vec<TraitedFact>>,
     pub categores: Option<Category>,
     pub attunement: Option<Attunement>,
@@ -467,7 +587,8 @@ pub struct Skill {
     pub bundle_skills: Option<Vec<SkillId>>,
     pub toolbelt_skill: Option<SkillId>,
     pub flags: Option<Vec<SkillFlag>>,
-    pub facts: Vec<Fact>,
+    // not al skills have a 'facts' field, for example Fire Attunement, id: 5492
+    pub facts: Option<Vec<Fact>>,
 }
 
 /// This does not work,
@@ -497,55 +618,60 @@ pub struct Skill {
 //     pub overrides: Option<usize>,
 // }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TraitedFact {
-    #[serde(rename = "type", flatten)]
-    pub _type: Fact,
-    pub requires_trait: TraitId,
-    /// array index of Fact
-    pub overrides: Option<usize>,
-}
-
-/// This works, but is there a better way?
+/// This also does not work.
 // #[derive(Clone, Debug, Serialize, Deserialize)]
 // #[serde(deny_unknown_fields)]
 // pub struct TraitedFact {
-//     pub text: String,
-//     #[serde(rename = "type")]
-//     pub _type: FactType,
+//     #[serde(rename = "type", flatten)]
+//     pub _type: Fact,
 //     pub requires_trait: TraitId,
 //     /// array index of Fact
 //     pub overrides: Option<usize>,
-//
-//     /// these are all the fields Facts can have
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub icon: Option<String>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub duration: Option<u8>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub status: Option<Status>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub description: Option<String>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub apply_count: Option<u8>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub field_type: Option<FieldType>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub percent: Option<u8>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub finisher_type: Option<FinisherType>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub dmg_multiplier: Option<f32>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub distance: Option<u16>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub hit_count: Option<u8>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub value: Option<u16>,
-//     #[serde(skip_serializing_if = "Option::is_none")]
-//     pub recharge: Option<u8>,
 // }
+
+/// This works, but is there a better way?
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TraitedFact {
+    pub text: String,
+    #[serde(rename = "type")]
+    pub _type: FactType,
+    pub requires_trait: TraitId,
+    /// array index of Fact
+    pub overrides: Option<usize>,
+
+    /// these are all the fields Facts can have
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<Status>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub apply_count: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub field_type: Option<FieldType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub percent: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub finisher_type: Option<FinisherType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dmg_multiplier: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub distance: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hit_count: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recharge: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub prefix: Option<Prefix>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target: Option<AttributeType>,
+}
 
 impl Endpoint for Skill {
     const AUTHENTICATED: bool = false;

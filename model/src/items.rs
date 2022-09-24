@@ -413,6 +413,7 @@ pub enum WeaponType {
     ShortBow,
     Staff,
     Harpoon,
+    Spear, // I had to add spear for some skills that reference WeaponType
     Speargun,
     Trident,
     LargeBundle,

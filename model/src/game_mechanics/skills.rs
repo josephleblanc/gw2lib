@@ -2,113 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::game_mechanics::traits::TraitId;
 use crate::items::AttributeType;
-pub use crate::{authenticated::characters::Profession, items};
+pub use crate::{authenticated::characters::Profession, items::WeaponType};
 use crate::{BulkEndpoint, Endpoint, EndpointWithId};
 
 pub type SkillId = u32;
-
-// I would love to know if there is a better way of doing this.
-// The only reason it is necessary to have two structs representing
-// weapon type for the items api and the skills api is because
-// shortbow is named differently in the two apis.
-// items api: ShortBow
-// skills api: Shortbow
-////////////////////////////////////////////////
-////////////////////////////////////////////////
-#[derive(Clone, PartialEq, Eq, PartialOrd, Debug, Serialize, Deserialize)]
-pub enum SkillWeaponType {
-    Axe,
-    Dagger,
-    Mace,
-    Pistol,
-    Scepter,
-    Sword,
-    Focus,
-    Shield,
-    Torch,
-    Warhorn,
-    Greatsword,
-    Hammer,
-    Longbow,
-    Rifle,
-    Shortbow,
-    Staff,
-    Harpoon,
-    Spear, // I had to add spear for some skills that reference WeaponType
-    Speargun,
-    Trident,
-    LargeBundle,
-    SmallBundle,
-    Toy,
-    ToyTwoHanded,
-    None,
-}
-
-impl From<items::WeaponType> for SkillWeaponType {
-    fn from(w: items::WeaponType) -> Self {
-        match w {
-            items::WeaponType::Axe => SkillWeaponType::Axe,
-            items::WeaponType::Dagger => SkillWeaponType::Dagger,
-            items::WeaponType::Mace => SkillWeaponType::Mace,
-            items::WeaponType::Pistol => SkillWeaponType::Pistol,
-            items::WeaponType::Scepter => SkillWeaponType::Scepter,
-            items::WeaponType::Sword => SkillWeaponType::Sword,
-            items::WeaponType::Focus => SkillWeaponType::Focus,
-            items::WeaponType::Shield => SkillWeaponType::Shield,
-            items::WeaponType::Torch => SkillWeaponType::Torch,
-            items::WeaponType::Warhorn => SkillWeaponType::Warhorn,
-            items::WeaponType::Greatsword => SkillWeaponType::Greatsword,
-            items::WeaponType::Hammer => SkillWeaponType::Hammer,
-            items::WeaponType::LongBow => SkillWeaponType::Longbow,
-            items::WeaponType::Rifle => SkillWeaponType::Rifle,
-            items::WeaponType::ShortBow => SkillWeaponType::Shortbow,
-            items::WeaponType::Staff => SkillWeaponType::Staff,
-            items::WeaponType::Harpoon => SkillWeaponType::Harpoon,
-            items::WeaponType::Spear => SkillWeaponType::Spear, // I had to add spear for some skills that reference WeaponType
-            items::WeaponType::Speargun => SkillWeaponType::Speargun,
-            items::WeaponType::Trident => SkillWeaponType::Trident,
-            items::WeaponType::LargeBundle => SkillWeaponType::LargeBundle,
-            items::WeaponType::SmallBundle => SkillWeaponType::SmallBundle,
-            items::WeaponType::Toy => SkillWeaponType::Toy,
-            items::WeaponType::ToyTwoHanded => SkillWeaponType::ToyTwoHanded,
-            items::WeaponType::None => SkillWeaponType::None,
-        }
-    }
-}
-
-impl Into<items::WeaponType> for SkillWeaponType {
-    fn into(self) -> items::WeaponType {
-        match self {
-            SkillWeaponType::Axe => items::WeaponType::Axe,
-            SkillWeaponType::Dagger => items::WeaponType::Dagger,
-            SkillWeaponType::Mace => items::WeaponType::Mace,
-            SkillWeaponType::Pistol => items::WeaponType::Pistol,
-            SkillWeaponType::Scepter => items::WeaponType::Scepter,
-            SkillWeaponType::Sword => items::WeaponType::Sword,
-            SkillWeaponType::Focus => items::WeaponType::Focus,
-            SkillWeaponType::Shield => items::WeaponType::Shield,
-            SkillWeaponType::Torch => items::WeaponType::Torch,
-            SkillWeaponType::Warhorn => items::WeaponType::Warhorn,
-            SkillWeaponType::Greatsword => items::WeaponType::Greatsword,
-            SkillWeaponType::Hammer => items::WeaponType::Hammer,
-            SkillWeaponType::Longbow => items::WeaponType::LongBow,
-            SkillWeaponType::Rifle => items::WeaponType::Rifle,
-            SkillWeaponType::Shortbow => items::WeaponType::ShortBow,
-            SkillWeaponType::Staff => items::WeaponType::Staff,
-            SkillWeaponType::Harpoon => items::WeaponType::Harpoon,
-            SkillWeaponType::Spear => items::WeaponType::Spear, // I had to add spear for some skills that reference WeaponType
-            SkillWeaponType::Speargun => items::WeaponType::Speargun,
-            SkillWeaponType::Trident => items::WeaponType::Trident,
-            SkillWeaponType::LargeBundle => items::WeaponType::LargeBundle,
-            SkillWeaponType::SmallBundle => items::WeaponType::SmallBundle,
-            SkillWeaponType::Toy => items::WeaponType::Toy,
-            SkillWeaponType::ToyTwoHanded => items::WeaponType::ToyTwoHanded,
-            SkillWeaponType::None => items::WeaponType::None,
-        }
-    }
-}
-////////////////////////////////////////////////
-////////////////////////////////////////////////
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum SkillType {
@@ -120,6 +17,7 @@ pub enum SkillType {
     Weapon,
     Toolbelt,
     Monster,
+    Pet,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -238,15 +136,51 @@ pub enum Status {
     SignetOfTheLocust,
     #[serde(rename = "Signet of Spite")]
     SignetOfSpite,
+    // Ranger-specific
+    #[serde(rename = "Signet of the Wild")]
+    SignetOfTheWild,
+    #[serde(rename = "Signet of Stone")]
+    SignetOfStone,
+    #[serde(rename = "Signet of Renewal")]
+    SignetOfRenewal,
+    #[serde(rename = "Signet of the Hunt")]
+    SignetOfTheHunt,
+    // Thief-specific
+    #[serde(rename = "Assassin's Signet")]
+    AssassinsSignet,
+    #[serde(rename = "Signet of Agility")]
+    SignetOfAgility,
+    // Warrior-Specific
+    #[serde(rename = "Signet of Rage")]
+    SignetOfRage,
+    #[serde(rename = "Healing Signet")]
+    HealingSignet,
+    #[serde(rename = "Signet of Might")]
+    SignetOfMight,
+    #[serde(rename = "Signet of Fury")]
+    SignetOfFury,
+    #[serde(rename = "Dolyak Signet")]
+    DolyakSignet,
+    #[serde(rename = "Signet of Stamina")]
+    SignetOfStamina,
     //// Profession-specific Statuses
     // Warrior-specific
     Rampage,
+    #[serde(rename = "Balanced Stance")]
+    BalancedStance,
+    #[serde(rename = "Enduring Pain")]
+    EnduringPain,
+    #[serde(rename = "Positive Flow")]
+    PositiveFlow,
+    #[serde(rename = "Berserker's Stance")]
+    BerserkersStance,
+    #[serde(rename = "Defiant Stance")]
+    DefiantStance,
     // Mesmer-specific
     Mirror,
     Distortion,
     #[serde(rename = "Illusion of Life")]
     IllusionOfLife,
-    #[serde(rename = "Blur")]
     Blur,
     // Guardian-specific
     #[serde(rename = "Binding Blade")]
@@ -257,26 +191,52 @@ pub enum Status {
     ZealotsFlame,
     #[serde(rename = "Virtue of Resolve")]
     VirtueOfResolve,
+    #[serde(rename = "Litany of Wrath")]
+    LitanyOfWrath,
     // Necromancer-specific
     #[serde(rename = "Grim Specter")]
     GrimSpecter,
     #[serde(rename = "Spectral Walk")]
     SpectralWalk,
+    #[serde(rename = "Vampiric Mark")]
+    VampiricMark,
+    // Ranger-specific
+    #[serde(rename = "Strength of the Pack")]
+    StrengthOfThePack,
+    #[serde(rename = "Counter Ready")]
+    CounterReady,
+    #[serde(rename = "Attack of Opportunity")]
+    AttackOfOpportunity,
+    #[serde(rename = "Sharpening Stone")]
+    SharpeningStone,
+    #[serde(rename = r#""Sic 'Em!""#)]
+    SicEm,
+    #[serde(rename = "Feeding Frenzy")]
+    FeedingFrenzy,
+    #[serde(rename = "Serpent's Preparation")]
+    SerpentsPreparation, // granted by Monarch's Leap, id: 12622
+    // Thief-specific
+    Repeater,
+    #[serde(rename = "Hooked Spear")]
+    HookedSpear,
+    #[serde(rename = "Spider Venom")]
+    SpiderVenom,
+    #[serde(rename = "Skale Venom")]
+    SkaleVenom,
+    #[serde(rename = "Basilisk Venom")]
+    BasiliskVenom,
+    #[serde(rename = "Devourer Venom")]
+    DevourerVenom,
+    #[serde(rename = "Ice Drake Venom")]
+    IceDrakeVenom,
+    #[serde(rename = "Skelk Venom")]
+    SkelkVenom,
+    // Engineer-specific
+    Plague,
+    #[serde(rename = "A.E.D.")]
+    Aed,
+
     // Elementalist-specific
-    #[serde(rename = "Chaos Aura")]
-    ChaosAura,
-    #[serde(rename = "Dark Aura")]
-    DarkAura,
-    #[serde(rename = "Fire Aura")]
-    FireAura,
-    #[serde(rename = "Frost Aura")]
-    FrostAura,
-    #[serde(rename = "Light Aura")]
-    LightAura,
-    #[serde(rename = "Magnetic Aura")]
-    MagneticAura,
-    #[serde(rename = "Shocking Aura")]
-    ShockingAura,
     #[serde(rename = "Stone Heart")]
     StoneHeart,
     #[serde(rename = "Conjure Fire Attributes")] // Yes, these are actually different
@@ -302,15 +262,29 @@ pub enum Status {
     #[serde(rename = "Renewal of Fire")]
     RenewalOfFire,
     Tornado,
+    Whirlpool,
     //// Race-specific
     // Norn
     Prowl,
     // Sylvari
     #[serde(rename = "Take Root")]
     TakeRoot,
-    // #[serde(rename = "Conjure Magnetic Attributes")]
-    // ConjureMagneticAttributes,
-    // Misc
+    //// Aura
+    #[serde(rename = "Chaos Aura")]
+    ChaosAura,
+    #[serde(rename = "Dark Aura")]
+    DarkAura,
+    #[serde(rename = "Fire Aura")]
+    FireAura,
+    #[serde(rename = "Frost Aura")]
+    FrostAura,
+    #[serde(rename = "Light Aura")]
+    LightAura,
+    #[serde(rename = "Magnetic Aura")]
+    MagneticAura,
+    #[serde(rename = "Shocking Aura")]
+    ShockingAura,
+    //// Misc
     Agony,
     Barrier,
     Invulnerability,
@@ -320,6 +294,171 @@ pub enum Status {
     Unblockable,
     #[serde(rename = "Fired Up!")]
     FiredUp,
+
+    // Found using a program, go through them later to sort them into their
+    // classes as above
+    Afterburner,
+    #[serde(rename = "Aquatic Stance")]
+    AquaticStance,
+    #[serde(rename = "Barrier Signet")]
+    BarrierSignet,
+    #[serde(rename = "Bear Stance")]
+    BearStance,
+    #[serde(rename = "Berserker's Power")]
+    BerserkersPower,
+    Blight,
+    #[serde(rename = "Breakrazor's Bastion")]
+    BreakrazorsBastion,
+    #[serde(rename = "Burst of Strength")]
+    BurstOfStrength,
+    #[serde(rename = "Chaos Corrosion")]
+    ChaosCorrosion,
+    #[serde(rename = "Combo Field: Dark")]
+    ComboFieldDark,
+    #[serde(rename = "Cooling Vapor")]
+    CoolingVapor,
+    #[serde(rename = "Crashing Courage")]
+    CrashingCourage,
+    #[serde(rename = "Crescent Wind")]
+    CrescentWind,
+    #[serde(rename = "Defy Pain")]
+    DefyPain,
+    Disenchantment,
+    #[serde(rename = "Dolyak Stance")]
+    DolyakStance,
+    Echo,
+    #[serde(rename = "Enfeebled Force")]
+    EnfeebledForce,
+    #[serde(rename = "Facet of Chaos")]
+    FacetOfChaos,
+    #[serde(rename = "Facet of Darkness")]
+    FacetOfDarkness,
+    #[serde(rename = "Facet of Elements")]
+    FacetOfElements,
+    #[serde(rename = "Facet of Light")]
+    FacetOfLight,
+    #[serde(rename = "Facet of Nature")]
+    FacetOfNature,
+    #[serde(rename = "Facet of Strength")]
+    FacetOfStrength,
+    #[serde(rename = "Flame Wheel")]
+    FlameWheel,
+    #[serde(rename = "Flowing Resolve")]
+    FlowingResolve,
+    #[serde(rename = "Force Signet")]
+    ForceSignet,
+    #[serde(rename = "Forced Engagement")]
+    ForcedEngagement,
+    #[serde(rename = "Forerunner of Death")]
+    ForerunnerOfDeath,
+    #[serde(rename = "Forest's Fortification")]
+    ForestsFortification,
+    Fractured,
+    #[serde(rename = "Griffon Stance")]
+    GriffonStance,
+    #[serde(rename = "Grinding Stones")]
+    GrindingStones,
+    #[serde(rename = "Icy Coil")]
+    IcyCoil,
+    #[serde(rename = "Igniting Brand")]
+    IgnitingBrand,
+    #[serde(rename = "Imperial Guard")]
+    ImperialGuard,
+    #[serde(rename = "Impossible Odds")]
+    ImpossibleOdds,
+    #[serde(rename = "Incoming conditions are ignored.")]
+    IncomingConditionsAreIgnored,
+    #[serde(rename = "Infuse Light")]
+    InfuseLight,
+    Justice,
+    #[serde(rename = "Kalla's Fervor")]
+    KallasFervor,
+    #[serde(rename = "Kinetic Abundance")]
+    KineticAbundance,
+    #[serde(rename = "Mirage Cloak")]
+    MirageCloak,
+    #[serde(rename = "Moa Stance")]
+    MoaStance,
+    #[serde(rename = "Molten Armor")]
+    MoltenArmor,
+    Morphed,
+    #[serde(rename = "One Wolf Pack")]
+    OneWolfPack,
+    #[serde(rename = "Overcharged Cartridges")]
+    OverchargedCartridges,
+    #[serde(rename = "Palm Strike")]
+    PalmStrike,
+    #[serde(rename = "Perilous Gift")]
+    PerilousGift,
+    #[serde(rename = "Primordial Stance")]
+    PrimordialStance,
+    #[serde(rename = "Pulmonary Impact")]
+    PulmonaryImpact,
+    #[serde(rename = "Radiant Blindness")]
+    RadiantBlindness,
+    #[serde(rename = "Razorclaw's Rage")]
+    RazorclawsRage,
+    Rebound,
+    Repose,
+    #[serde(rename = "Reversal of Fortune")]
+    ReversalOfFortune,
+    #[serde(rename = "Rite of the Great Dwarf")]
+    RiteOfTheGreatDwarf,
+    #[serde(rename = "Rock Guard")]
+    RockGuard,
+    #[serde(rename = "Rocky Loop")]
+    RockyLoop,
+    #[serde(rename = "Saint of zu Heltzer")]
+    SaintOfZuHeltzer,
+    #[serde(rename = "Sharpen Spines")]
+    SharpenSpines,
+    #[serde(rename = "Sight beyond Sight")]
+    SightBeyondSight,
+    #[serde(rename = "Soulcleave's Summit")]
+    SoulcleavesSummit,
+    #[serde(rename = "Spectrum Shield")]
+    SpectrumShield,
+    #[serde(rename = "Static Charge")]
+    StaticCharge,
+    #[serde(rename = "Stim State")]
+    StimState,
+    #[serde(rename = "Stone Resonance")]
+    StoneResonance,
+    #[serde(rename = "Superconducting Signet")]
+    SuperconductingSignet,
+    #[serde(rename = "Tactical Reload")]
+    TacticalReload,
+    #[serde(rename = "Time Echo")]
+    TimeEcho,
+    #[serde(rename = "Tome of Resolve")]
+    TomeOfResolve,
+    Tranquil,
+    #[serde(rename = "True Nature")]
+    TrueNature,
+    #[serde(rename = "Unbridled Chaos")]
+    UnbridledChaos,
+    #[serde(rename = "Unbridled Fear")]
+    UnbridledFear,
+    #[serde(rename = "Unflinching Fortitude")]
+    UnflinchingFortitude,
+    Unravel,
+    #[serde(rename = "Urn of Saint Viktor")]
+    UrnOfSaintViktor,
+    #[serde(rename = "Vampiric Infection")]
+    VampiricInfection,
+    #[serde(rename = "Vengeful Hammers")]
+    VengefulHammers,
+    #[serde(rename = "Violent Currents")]
+    ViolentCurrents,
+    #[serde(rename = "Virtue of Courage")]
+    VirtueOfCourage,
+    #[serde(rename = "Vulture Stance")]
+    VultureStance,
+    #[serde(rename = "Watchful Eye")]
+    WatchfulEye,
+    Waterlogged,
+    #[serde(rename = "Weave Self")]
+    WeaveSelf,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -601,7 +740,9 @@ pub struct StunBreakFact {
 pub struct TimeFact {
     text: String,
     icon: String,
-    duration: u8,
+    duration: u16, // duration needing over u8 surprised me.
+                   // Some skills have a duration over 255.
+                   // Example: Prepare Thousand Needles, id: 13026
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -672,7 +813,7 @@ pub struct Skill {
     // not all skills have a 'type' field. For example; Binding Roots, id: 1279
     #[serde(rename = "type")]
     pub _type: Option<SkillType>,
-    pub weapon_type: Option<SkillWeaponType>,
+    pub weapon_type: Option<WeaponType>,
     // not all skills have a 'professions' field. For example; Binding Roots, id: 1279
     pub professions: Option<Vec<Profession>>,
     // not all skills have a 'slot' field. For example; Binding Roots, id: 1279
@@ -680,8 +821,8 @@ pub struct Skill {
     pub traited_facts: Option<Vec<TraitedFact>>,
     pub categores: Option<Category>,
     pub attunement: Option<Attunement>,
-    pub cost: Option<u8>,
-    pub dual_wield: Option<SkillWeaponType>,
+    pub cost: Option<u16>,
+    pub dual_wield: Option<WeaponType>,
     pub flip_skill: Option<SkillId>,
     pub initiative: Option<u8>,
     pub next_chain: Option<SkillId>,

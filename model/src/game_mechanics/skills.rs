@@ -65,6 +65,7 @@ pub enum FactType {
     StunBreak,
     Time,
     Unblockable,
+    None,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -296,7 +297,7 @@ pub enum Status {
     FiredUp,
 
     // Found using a program, go through them later to sort them into their
-    // classes as above
+    // professions as above, where applicable
     Afterburner,
     #[serde(rename = "Aquatic Stance")]
     AquaticStance,
@@ -339,6 +340,21 @@ pub enum Status {
     FacetOfLight,
     #[serde(rename = "Facet of Nature")]
     FacetOfNature,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "Facet of Nature—Assassin")]
+    FacetOfNature_Assassin,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "Facet of Nature—Centaur")]
+    FacetOfNature_Centaur,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "Facet of Nature—Dwarf")]
+    FacetOfNature_Dwarf,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "Facet of Nature—Dragon")]
+    FacetOfNature_Dragon,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "Facet of Nature—Demon")]
+    FacetOfNature_Demon,
     #[serde(rename = "Facet of Strength")]
     FacetOfStrength,
     #[serde(rename = "Flame Wheel")]
@@ -678,7 +694,8 @@ pub struct NoDataFact {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct NumberFact {
-    text: String,
+    // text field not always present, e.g. Tides of Time, id: 30643
+    text: Option<String>,
     icon: String,
     value: u16,
 }
@@ -698,7 +715,8 @@ pub struct PrefixedBuffFact {
     icon: String,
     duration: u8,
     status: Status,
-    description: String,
+    // description field not always present, e.g. True Nature, id: 29393
+    description: Option<String>,
     apply_count: u8,
     prefix: Prefix,
 }
@@ -753,6 +771,14 @@ pub struct UnblockableFact {
     value: bool, // this is annoying because most other value fields are numbers
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct UntypedFact {
+    text: String,
+    icon: String,
+    percent: u16,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Fact {
@@ -775,6 +801,14 @@ pub enum Fact {
     StunBreak(StunBreakFact),
     Time(TimeFact),
     Unblockable(UnblockableFact),
+
+    // Sometimes there is no 'type' field on a fact, e.g. Nefarious Favor,
+    // id: 40813. In this case there was only a 'text', 'icon', and 'percent'
+    // field.
+    // Try using an 'Empty' variant here, with a corresponding 'EmptyFact'
+    // that has only those fields. Fill out the fields with options of needed.
+    // This will need to be the serde default.
+    None(UntypedFact),
 }
 
 impl From<Fact> for FactType {
@@ -799,6 +833,7 @@ impl From<Fact> for FactType {
             Fact::StunBreak(_) => FactType::StunBreak,
             Fact::Time(_) => FactType::Time,
             Fact::Unblockable(_) => FactType::Unblockable,
+            Fact::None(_) => FactType::None,
         }
     }
 }
@@ -807,6 +842,7 @@ impl From<Fact> for FactType {
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
+    // description field not always there, e.g. True Nature, id: 29393
     pub description: String,
     pub icon: Option<String>,
     pub chat_link: String,
@@ -831,7 +867,7 @@ pub struct Skill {
     pub bundle_skills: Option<Vec<SkillId>>,
     pub toolbelt_skill: Option<SkillId>,
     pub flags: Option<Vec<SkillFlag>>,
-    // not al skills have a 'facts' field, for example Fire Attunement, id: 5492
+    // not all skills have a 'facts' field, for example Fire Attunement, id: 5492.
     pub facts: Option<Vec<Fact>>,
 }
 
@@ -874,6 +910,7 @@ pub struct Skill {
 // }
 
 /// This works, but is there a better way?
+// Try out the #[skip_serializing_none] serde attribute here.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TraitedFact {

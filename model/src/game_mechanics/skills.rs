@@ -991,7 +991,7 @@ pub struct Skill {
     // not all skills have a 'slot' field. For example; Binding Roots, id: 1279
     pub slot: Option<Slot>,
     pub traited_facts: Option<Vec<TraitedFact>>,
-    pub categores: Option<Category>,
+    pub categories: Option<Category>,
     pub attunement: Option<Attunement>,
     pub cost: Option<u16>,
     pub dual_wield: Option<WeaponType>,

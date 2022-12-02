@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::game_mechanics::traits::TraitId;
 use crate::items::AttributeType;
@@ -18,6 +18,9 @@ pub enum SkillType {
     Toolbelt,
     Monster,
     Pet,
+    // Someone said there is a Transform type as well.
+    // Wait until I can verify to include it.
+    // Transform,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -62,10 +65,13 @@ pub enum FactType {
     Radius,
     Range,
     Recharge,
+    // Stunbreak is not listed on the wiki as one of the possible fields, but
+    // you can see an example of it being used in Glyph of Elemental Power,
+    // id: 5506
     StunBreak,
     Time,
     Unblockable,
-    None,
+    UnTyped,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -285,6 +291,20 @@ pub enum Status {
     MagneticAura,
     #[serde(rename = "Shocking Aura")]
     ShockingAura,
+    //// ComboField
+    // These are used in some skills to specify the type of field created,
+    // e.g. Rift of Pain, id: 50390
+    #[serde(rename = "Combo Field: Dark")]
+    ComboFieldDark,
+    #[serde(rename = "Combo Field: Lightning")]
+    ComboFieldLightning,
+    #[serde(rename = "Combo Field: Light")]
+    ComboFieldLight,
+    #[serde(rename = "Combo Field: Fire")]
+    ComboFieldFire,
+    #[serde(rename = "Combo Field: Water")]
+    ComboFieldWater,
+
     //// Misc
     Agony,
     Barrier,
@@ -314,10 +334,10 @@ pub enum Status {
     BurstOfStrength,
     #[serde(rename = "Chaos Corrosion")]
     ChaosCorrosion,
-    #[serde(rename = "Combo Field: Dark")]
-    ComboFieldDark,
     #[serde(rename = "Cooling Vapor")]
     CoolingVapor,
+    #[serde(rename = "Conjured Barrier")]
+    ConjuredBarrier,
     #[serde(rename = "Crashing Courage")]
     CrashingCourage,
     #[serde(rename = "Crescent Wind")]
@@ -382,6 +402,8 @@ pub enum Status {
     ImperialGuard,
     #[serde(rename = "Impossible Odds")]
     ImpossibleOdds,
+    #[serde(rename = "Improved Kalla's Fervor")]
+    ImprovedKallasFervor,
     #[serde(rename = "Incoming conditions are ignored.")]
     IncomingConditionsAreIgnored,
     #[serde(rename = "Infuse Light")]
@@ -404,8 +426,12 @@ pub enum Status {
     OverchargedCartridges,
     #[serde(rename = "Palm Strike")]
     PalmStrike,
+    #[serde(rename = "Perfect Weave")]
+    PerfectWeave,
     #[serde(rename = "Perilous Gift")]
     PerilousGift,
+    #[serde(rename = "Photon Forge")]
+    PhotonForge,
     #[serde(rename = "Primordial Stance")]
     PrimordialStance,
     #[serde(rename = "Pulmonary Impact")]
@@ -475,6 +501,16 @@ pub enum Status {
     Waterlogged,
     #[serde(rename = "Weave Self")]
     WeaveSelf,
+    #[serde(rename = "Woven Earth")]
+    WovenEarth,
+    #[serde(rename = "Woven Air")]
+    WovenAir,
+    #[serde(rename = "Woven Fire")]
+    WovenFire,
+    #[serde(rename = "Woven Water")]
+    WovenWater,
+    #[serde(rename = "You do not lose health from being downed.")]
+    YoDoNotLoseHealthFromBeingDowned,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -601,7 +637,7 @@ pub enum SkillFlag {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct AttributeAdjustFact {
     text: Option<String>,
     icon: String,
@@ -611,7 +647,7 @@ pub struct AttributeAdjustFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct BuffFact {
     text: String,
     icon: String,
@@ -625,7 +661,7 @@ pub struct BuffFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct ComboFieldFact {
     text: String,
     icon: String,
@@ -633,18 +669,20 @@ pub struct ComboFieldFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct ComboFinisherFact {
     text: String,
     icon: String,
-    // other value of percent is f32, so this probably should be as well
+    // other value of percent (in PercentFact struct) needed to be f32,
+    // so this probably should as well.
+    // Test this later.
     percent: f32,
     finisher_type: FinisherType,
     chance: Option<u8>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct DamageFact {
     text: String,
     icon: String,
@@ -653,7 +691,7 @@ pub struct DamageFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct DistanceFact {
     text: String,
     icon: String,
@@ -661,7 +699,7 @@ pub struct DistanceFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct DurationFact {
     text: String,
     icon: String,
@@ -669,7 +707,7 @@ pub struct DurationFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct HealFact {
     text: String,
     icon: String,
@@ -677,7 +715,7 @@ pub struct HealFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct HealingAdjustFact {
     text: String,
     icon: String,
@@ -685,14 +723,14 @@ pub struct HealingAdjustFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct NoDataFact {
     text: String,
     icon: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct NumberFact {
     // text field not always present, e.g. Tides of Time, id: 30643
     text: Option<String>,
@@ -701,15 +739,19 @@ pub struct NumberFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct PercentFact {
     text: String,
     icon: String,
+    // Some Percent facts have 'value' fields instead of the more common
+    // 'percent' field.
+    // e.g. Engage Photon Forge
+    #[serde(alias = "value")]
     percent: f32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct PrefixedBuffFact {
     text: String,
     icon: String,
@@ -722,7 +764,7 @@ pub struct PrefixedBuffFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct RadiusFact {
     text: String,
     icon: String,
@@ -730,15 +772,15 @@ pub struct RadiusFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type", rename = "Range")]
 pub struct RangeFact {
     text: String,
     icon: String,
-    value: u16,
+    value: u32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct RechargeFact {
     text: String,
     icon: String,
@@ -746,7 +788,7 @@ pub struct RechargeFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct StunBreakFact {
     text: String,
     icon: String,
@@ -754,7 +796,7 @@ pub struct StunBreakFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct TimeFact {
     text: String,
     icon: String,
@@ -764,7 +806,7 @@ pub struct TimeFact {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(deny_unknown_fields)]
+#[serde(tag = "type")]
 pub struct UnblockableFact {
     text: String,
     icon: String,
@@ -773,14 +815,107 @@ pub struct UnblockableFact {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
-pub struct UntypedFact {
+// this is not marked with serde(tag = "type"), which is how it is chosen from
+// the untagged Fact enum when there is no "type" key provided by the api
+pub struct UnTypedFact {
     text: String,
     icon: String,
+    // other value of percent (in PercentFact struct) needed to be f32,
+    // so this probably should as well.
+    // Test this later.
     percent: u16,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
+/// Trying to get a custom deserialize to work with Fact struct to handle
+/// skill facts with no 'type' entry.
+use serde::de;
+impl<'de> Deserialize<'de> for Fact {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        use serde_json::Value;
+        #[derive(Deserialize, Debug)]
+        struct FactHelper {
+            #[serde(rename = "type")]
+            fact_type: Option<FactType>,
+        }
+
+        let v = Value::deserialize(deserializer)?;
+        let helper = FactHelper::deserialize(&v).map_err(de::Error::custom)?;
+        println!("{:?}", helper.fact_type);
+        match helper.fact_type {
+            Some(fact_type) => {
+                if fact_type == FactType::AttributeAdjust {
+                    let fact = AttributeAdjustFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::AttributeAdjust(fact))
+                } else if fact_type == FactType::Buff {
+                    let fact = BuffFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Buff(fact))
+                } else if fact_type == FactType::ComboField {
+                    let fact = ComboFieldFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::ComboField(fact))
+                } else if fact_type == FactType::ComboFinisher {
+                    let fact = ComboFinisherFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::ComboFinisher(fact))
+                } else if fact_type == FactType::Damage {
+                    let damage_fact = DamageFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Damage(damage_fact))
+                } else if fact_type == FactType::Distance {
+                    let fact = DistanceFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Distance(fact))
+                } else if fact_type == FactType::Duration {
+                    let fact = DurationFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Duration(fact))
+                } else if fact_type == FactType::Heal {
+                    let fact = HealFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Heal(fact))
+                } else if fact_type == FactType::HealingAdjust {
+                    let fact = HealingAdjustFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::HealingAdjust(fact))
+                } else if fact_type == FactType::NoData {
+                    let fact = NoDataFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::NoData(fact))
+                } else if fact_type == FactType::Number {
+                    let fact = NumberFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Number(fact))
+                } else if fact_type == FactType::Percent {
+                    let fact = PercentFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Percent(fact))
+                } else if fact_type == FactType::PrefixedBuff {
+                    let fact = PrefixedBuffFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::PrefixedBuff(fact))
+                } else if fact_type == FactType::Radius {
+                    let fact = RadiusFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Radius(fact))
+                } else if fact_type == FactType::Range {
+                    let fact = RangeFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Range(fact))
+                } else if fact_type == FactType::Recharge {
+                    let fact = RechargeFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Recharge(fact))
+                } else if fact_type == FactType::StunBreak {
+                    let fact = StunBreakFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::StunBreak(fact))
+                } else if fact_type == FactType::Time {
+                    let fact = TimeFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Time(fact))
+                } else if fact_type == FactType::Unblockable {
+                    let fact = UnblockableFact::deserialize(v).map_err(de::Error::custom)?;
+                    Ok(Fact::Unblockable(fact))
+                } else {
+                    panic!("the `type` field could not be deserialized to one of the listed FactType options listed");
+                }
+            }
+            None => {
+                let untyped_fact = UnTypedFact::deserialize(v).map_err(de::Error::custom)?;
+                Ok(Fact::UnTyped(untyped_fact))
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize)]
 pub enum Fact {
     AttributeAdjust(AttributeAdjustFact),
     Buff(BuffFact),
@@ -805,10 +940,9 @@ pub enum Fact {
     // Sometimes there is no 'type' field on a fact, e.g. Nefarious Favor,
     // id: 40813. In this case there was only a 'text', 'icon', and 'percent'
     // field.
-    // Try using an 'Empty' variant here, with a corresponding 'EmptyFact'
-    // that has only those fields. Fill out the fields with options of needed.
-    // This will need to be the serde default.
-    None(UntypedFact),
+    // This can be handled by making Fact untagged, tagging all the variants'
+    // ___Fact (e.g. BuffFact), with "type", and not tagging UnTypedFact.
+    UnTyped(UnTypedFact),
 }
 
 impl From<Fact> for FactType {
@@ -833,7 +967,7 @@ impl From<Fact> for FactType {
             Fact::StunBreak(_) => FactType::StunBreak,
             Fact::Time(_) => FactType::Time,
             Fact::Unblockable(_) => FactType::Unblockable,
-            Fact::None(_) => FactType::None,
+            Fact::UnTyped(_) => FactType::UnTyped,
         }
     }
 }
@@ -871,6 +1005,9 @@ pub struct Skill {
     pub facts: Option<Vec<Fact>>,
 }
 
+/// The following are attempts to make TraitedFact deserialize in a more
+/// elegant way. Unfortunately none of them work.
+///
 /// This does not work,
 /// returns Error("missing field `text`"...
 // #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -883,7 +1020,6 @@ pub struct Skill {
 //     /// array index of Fact
 //     pub overrides: Option<usize>,
 // }
-
 /// This does not work either,
 /// returns Error("invalid type: string \"Damage\", expected internally tagged
 ///     enum Fact"
@@ -897,7 +1033,6 @@ pub struct Skill {
 //     /// array index of Fact
 //     pub overrides: Option<usize>,
 // }
-
 /// This also does not work.
 // #[derive(Clone, Debug, Serialize, Deserialize)]
 // #[serde(deny_unknown_fields)]

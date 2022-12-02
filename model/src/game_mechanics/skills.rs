@@ -342,6 +342,8 @@ pub enum Status {
     CrashingCourage,
     #[serde(rename = "Crescent Wind")]
     CrescentWind,
+    #[serde(rename = "Death's Advance")]
+    DeathsAdvance,
     #[serde(rename = "Defy Pain")]
     DefyPain,
     Disenchantment,
@@ -843,7 +845,7 @@ impl<'de> Deserialize<'de> for Fact {
 
         let v = Value::deserialize(deserializer)?;
         let helper = FactHelper::deserialize(&v).map_err(de::Error::custom)?;
-        println!("{:?}", helper.fact_type);
+        // println!("{:?}", helper.fact_type);
         match helper.fact_type {
             Some(fact_type) => {
                 if fact_type == FactType::AttributeAdjust {
